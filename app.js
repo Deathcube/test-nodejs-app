@@ -4,6 +4,68 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
+
+var url = 'mongodb://localhost:27017/db';
+
+MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server.");
+
+    insertDocuments(db, function() {
+        updateDocument(db, function() {
+            deleteDocument(db, function() {
+                db.close();
+            });
+        });
+    });
+});
+
+var updateDocument = function(db, callback) {
+    // Get the documents collection
+    var collection = db.collection('documents');
+    // Update document where a is 2, set b equal to 1
+    collection.updateOne({ a : 2 }
+        , { $set: { b : 1 } }, function(err, result) {
+            assert.equal(err, null);
+
+            console.log("Updated the document with the field a equal to 2");
+            callback(result);
+        });
+};
+
+var insertDocuments = function(db, callback) {
+    // Get the documents collection
+    var collection = db.collection('documents');
+    // Insert some documents
+    collection.insertMany([
+        {a : 1}, {a : 2}, {a : 3}
+    ], function(err, result) {
+        assert.equal(err, null);
+
+        console.log("Inserted 3 documents into the document collection");
+        callback(result);
+    });
+};
+
+var deleteDocument = function(db, callback) {
+    // Get the documents collection
+    var collection = db.collection('documents');
+    // Insert some documents
+    collection.deleteOne({ a : 3 }, function(err, result) {
+        assert.equal(err, null);
+
+        console.log("Removed the document with the field a equal to 3");
+        callback(result);
+    });
+};
+
+
+
+
+
+
 
 var app = express();
 
