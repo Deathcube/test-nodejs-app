@@ -10,6 +10,22 @@ var assert = require('assert');
 var dburl = 'mongodb://localhost:27017/db';
 
 
+var insertNewComment = function(db, comment, callback) {
+    // Get the documents collection
+    var collection = db.collection('comments');
+
+    comment['parent'] = '';
+    comment['date'] = Date.now();
+
+    var a = 2;
+    // Insert some documents
+    collection.insertOne(comment, function(err, result) {
+        assert.equal(err, null);
+        callback(result);
+    });
+};
+
+
 var getAllComments = function(db, callback) {
     // Get the documents collection
     var collection = db.collection('comments');
@@ -80,7 +96,6 @@ app.route('/')
         MongoClient.connect(dburl, function(err, db) {
             assert.equal(null, err);
 
-            console.log("Connected correctly to server.");
             getAllComments(db, function (data) {
 
                 comments = buildCommentsTree(prepareJSONdata(data));
@@ -89,7 +104,19 @@ app.route('/')
         });
     })
     .post(function (req,res) {
-        console.log(req);
+        var comment = req.body;
+
+        MongoClient.connect(dburl, function(err, db) {
+            assert.equal(null, err);
+
+            insertNewComment(db, comment, function () {
+                getAllComments(db, function (data) {
+
+                    comments = buildCommentsTree(prepareJSONdata(data));
+                    res.send(data);
+                });
+            });
+        });
     });
 
 // catch 404 and forward to error handler

@@ -6,11 +6,18 @@ block content
   button#add_comment.btn.btn-primary(type='button') Add new comment
 
   .container
+    include modal_form
+
     mixin parseComments(comments)
       div
         each item, i in comments
           div
-            p= item.comment
+
+            p
+              div= item.date
+              div= item.name
+              div= item.theme
+              div= item.comment
             if(item.children.length != 0)
               mixin parseComments(item.children)
 

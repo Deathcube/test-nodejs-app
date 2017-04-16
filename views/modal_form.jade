@@ -1,0 +1,27 @@
+#modal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true")
+  .modal-dialog.wide-modal
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-hidden='true') x
+        h2= 'New Comment'
+      .modal-body
+          form.form-horizontal(id="comment_form" name="comment_form" method="post" action="")
+                // Text input
+                .form-group
+                  label.col-xs-4.control-label(for='name') Your Name:
+                  .col-xs-8
+                    input#name.form-control.input-xs(type='text', name='name', autofocus, required)
+
+                .form-group
+                  label.col-xs-4.control-label(for='theme') Theme:
+                  .col-xs-8
+                    input#theme.form-control.input-xs(type='text', name='theme', autofocus, required)
+
+                .form-group
+                  label.col-xs-4.control-label(for='comment') Comment text
+                  .col-xs-8
+                    textarea#comment.form-control(name='comment', autofocus, required)
+
+      .modal-footer
+        button#send_form_comment.btn.btn-primary(type='button') Create
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
