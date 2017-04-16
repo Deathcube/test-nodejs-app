@@ -1,6 +1,19 @@
 extends layout
 
+
 block content
+
+  button#add_comment.btn.btn-primary(type='button') Add new comment
+
   .container
-    h1= page
-    p= content
+    mixin parseComments(comments)
+      div
+        each item, i in comments
+          div
+            p= item.comment
+            if(item.children.length != 0)
+              mixin parseComments(item.children)
+
+
+
+    +parseComments(results)
