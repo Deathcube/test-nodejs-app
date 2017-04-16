@@ -1,0 +1,17 @@
+mixin parseComments(comments, lvl)
+    div
+        each item, i in comments
+            if(item.parent == '')
+                - lvl = 0;
+            else
+                - lvl++;
+            hr
+            div(style='padding-left:' + lvl * 30 + 'px')
+
+                include comment_template
+
+                if(item.children.length != 0)
+                    mixin parseComments(item.children, lvl)
+
+
++parseComments(comments, 0)

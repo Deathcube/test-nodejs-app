@@ -12,7 +12,7 @@ $('#send_form_comment').on('click', function () {
         data: $('#comment_form').serialize(),
         success : function (data) {
             $('#modal').modal('hide');
-            console.log(data);
+            $('#comments_field').html(data);
         }
     });
 });

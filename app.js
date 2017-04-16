@@ -6,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
+var fs = require('fs');
+var jade = require('jade');
 
 var dburl = 'mongodb://localhost:27017/db';
 
@@ -17,8 +19,6 @@ var insertNewComment = function(db, comment, callback) {
     comment['parent'] = '';
     comment['date'] = Date.now();
 
-    var a = 2;
-    // Insert some documents
     collection.insertOne(comment, function(err, result) {
         assert.equal(err, null);
         callback(result);
@@ -99,7 +99,7 @@ app.route('/')
             getAllComments(db, function (data) {
 
                 comments = buildCommentsTree(prepareJSONdata(data));
-                res.render('index', {'results':comments, 'title':'test'});
+                res.render('index', {'comments':comments, 'title':'test'});
             });
         });
     })
@@ -113,7 +113,14 @@ app.route('/')
                 getAllComments(db, function (data) {
 
                     comments = buildCommentsTree(prepareJSONdata(data));
-                    res.send(data);
+
+                    fs.readFile('views/comment_generator.jade', 'utf8', function (err, data) {
+                        if (err) throw err;
+
+                        var fn = jade.compile(data);
+                        var html = fn(comments);
+                        res.send(html);
+                    });
                 });
             });
         });
