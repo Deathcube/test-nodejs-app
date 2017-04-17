@@ -1,17 +1,11 @@
-mixin parseComments(comments, lvl)
+mixin parseComments(comments)
     div
         each item, i in comments
-            if(item.parent == '')
-                - lvl = 0;
-            else
-                - lvl = lvl + 15;
-            hr
-            div(style='padding-left:' + lvl + 'px')
+            div(class = 'col-md-12')
+                div
+                    include comment_template
 
-                include comment_template
+                    if(item.children.length != 0)
+                        mixin parseComments(item.children)
 
-                if(item.children.length != 0)
-                    mixin parseComments(item.children, lvl)
-
-
-+parseComments(comments, 0)
++parseComments(comments)

@@ -1,6 +1,6 @@
 p
     div= item.date
-    div= item.name
-    div= item.theme
-    div= item.comment
-    button.add_comment.btn.btn-default(id=item.id, type='button') Reply
+    div= 'Name: ' + item.name
+    div= 'Theme: ' + item.theme
+    div= 'Comment: ' + item.comment
+    a.add_comment(href='#' id=item.id) Reply

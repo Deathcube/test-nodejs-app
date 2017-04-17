@@ -1,5 +1,6 @@
 
-$('#fields').on('click', '.add_comment', function () {
+$('#fields').on('click', '.add_comment', function (e) {
+    e.preventDefault();
     $('#comment_form').append('<input type="hidden" name="parent" value="'+$(this).attr('id')+'" />');
     $('#modal').modal('show');
 });
