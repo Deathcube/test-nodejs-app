@@ -96,11 +96,36 @@ app.route('/')
         MongoClient.connect(dburl, function(err, db) {
             assert.equal(null, err);
 
-            getAllComments(db, function (data) {
+            var modal = {
+                'id':'send_form_comment',
+                'title':'New Comment',
+                'button_text':'Create'
+            };
 
+            getAllComments(db, function (data) {
                 comments = buildCommentsTree(prepareJSONdata(data));
-                res.render('index', {'comments':comments, 'title':'test'});
+                res.render('index', {'comments':comments, 'title':'Comments', 'modal':modal});
             });
+        });
+    });
+
+app.route('/reply_comment')
+    .get(function (req,res) {
+
+        var modal = {
+            'modal': {
+                'id':'send_reply_comment',
+                'title':'Reply Comment',
+                'button_text':'Reply'
+            }
+        };
+
+        fs.readFile('views/modal_form.jade', 'utf8', function (err, data) {
+
+            var fn = jade.compile(data);
+            var html = fn(modal);
+
+            res.send(html);
         });
     })
     .post(function (req,res) {
@@ -114,13 +139,53 @@ app.route('/')
 
                     comments = buildCommentsTree(prepareJSONdata(data));
 
-                    fs.readFile('views/comment_generator.jade', 'utf8', function (err, data) {
-                        if (err) throw err;
-
-                        var fn = jade.compile(data);
-                        var html = fn(comments);
-                        res.send(html);
+                    var fn = jade.compile(fs.readFileSync('views/comment_generator.jade', 'utf-8'), {
+                        filename: path.join(__dirname, 'views/comment_generator.jade')
                     });
+
+                    var html = fn(comments);
+                    res.send(html);
+                });
+            });
+        });
+    });
+
+app.route('/add_comment')
+    .get(function (req,res) {
+
+        var modal = {
+            'modal': {
+                'id':'send_form_comment',
+                'title':'New Comment',
+                'button_text':'Create'
+            }
+        };
+
+        fs.readFile('views/modal_form.jade', 'utf8', function (err, data) {
+
+            var fn = jade.compile(data);
+            var html = fn(modal);
+
+            res.send(html);
+        });
+    })
+    .post(function (req,res) {
+        var comment = req.body;
+
+        MongoClient.connect(dburl, function(err, db) {
+            assert.equal(null, err);
+
+            insertNewComment(db, comment, function () {
+                getAllComments(db, function (data) {
+
+                    comments = buildCommentsTree(prepareJSONdata(data));
+
+                    var fn = jade.compile(fs.readFileSync('views/comment_generator.jade', 'utf-8'), {
+                        filename: path.join(__dirname, 'views/comment_generator.jade')
+                    });
+
+                    var html = fn(comments);
+                    res.send(html);
                 });
             });
         });

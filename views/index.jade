@@ -2,11 +2,13 @@ extends layout
 
 
 block content
+  h1= 'Comments Page'
 
   button#add_comment.btn.btn-primary(type='button') Add new comment
 
   .container
-    include modal_form
+    div#modal_field
+      include modal_form
 
     div#comments_field
       include comment_generator

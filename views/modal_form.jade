@@ -3,7 +3,7 @@
     .modal-content
       .modal-header
         button.close(type='button', data-dismiss='modal', aria-hidden='true') x
-        h2= 'New Comment'
+        h2= modal.title
       .modal-body
           form.form-horizontal(id="comment_form" name="comment_form" method="post" action="")
                 // Text input
@@ -23,5 +23,5 @@
                     textarea#comment.form-control(name='comment', autofocus, required)
 
       .modal-footer
-        button#send_form_comment.btn.btn-primary(type='button') Create
+        button(id=modal.id, class='btn btn-primary', type='button')= modal.button_text
         button.btn.btn-default(type='button', data-dismiss='modal') Close
