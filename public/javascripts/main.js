@@ -1,48 +1,34 @@
 
-$('#add_comment').on('click', function () {
-    $.ajax({
-        method: "GET",
-        url: "/add_comment",
-        success : function (data) {
-            $('#modal_field').html(data);
-            $('#modal').modal('show');
-        }
-    });
+$('#fields').on('click', '.add_comment', function () {
+    $('#comment_form').append('<input type="hidden" name="parent" value="'+$(this).attr('id')+'" />');
+    $('#modal').modal('show');
 });
 
-$('#send_form_comment').on('click', function () {
-
-    $.ajax({
-        method: "POST",
-        url: "/add_comment",
-        data: $('#comment_form').serialize(),
-        success : function (data) {
-            $('#comments_field').html(data);
-            $('#modal').modal('hide');
-        }
-    });
+$('.create_new_comment').on('click', function () {
+    $('#comment_form').append('<input type="hidden" name="parent" value="" />');
+    $('#modal').modal('show');
 });
 
-$('.reply_comment').on('click', function () {
-    $.ajax({
-        method: "GET",
-        url: "/reply_comment",
-        data: {'parent':$(this).attr('id')},
-        success : function (data) {
-            $('#modal_field').html(data);
-            $('#modal').modal('show');
-        }
-    });
-});
+$('#fields').on('click', '.modal_send', function (e) {
+    e.preventDefault();
+    var fields = {};
 
-$('#send_reply_comment').on('click', function () {
+    $.each($('#comment_form').serializeArray(), function( key, field ) {
+        fields[field.name] = field.value;
+    });
+
     $.ajax({
         method: "POST",
-        url: "/reply_comment",
-        data: $('#comment_form').serialize(),
+        url: "/",
+        data: fields,
         success : function (data) {
-            $('#comments_field').html(data);
             $('#modal').modal('hide');
+            $('#comments_field').html(data);
         }
     });
 });
+
+$('#modal').on('hidden.bs.modal', function(){
+    $('#comment_form').find('input[name="parent"]').remove();
+});
+

@@ -4,9 +4,9 @@ mixin parseComments(comments, lvl)
             if(item.parent == '')
                 - lvl = 0;
             else
-                - lvl++;
+                - lvl = lvl + 15;
             hr
-            div(style='padding-left:' + lvl * 30 + 'px')
+            div(style='padding-left:' + lvl + 'px')
 
                 include comment_template
 

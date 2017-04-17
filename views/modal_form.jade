@@ -3,7 +3,7 @@
     .modal-content
       .modal-header
         button.close(type='button', data-dismiss='modal', aria-hidden='true') x
-        h2= modal.title
+        h2= 'Comment'
       .modal-body
           form.form-horizontal(id="comment_form" name="comment_form" method="post" action="")
                 // Text input
@@ -18,10 +18,10 @@
                     input#theme.form-control.input-xs(type='text', name='theme', autofocus, required)
 
                 .form-group
-                  label.col-xs-4.control-label(for='comment') Comment text
+                  label.col-xs-4.control-label(for='comment') Comment text:
                   .col-xs-8
                     textarea#comment.form-control(name='comment', autofocus, required)
 
       .modal-footer
-        button(id=modal.id, class='btn btn-primary', type='button')= modal.button_text
+        button(class='btn btn-primary modal_send', type='button') Send
         button.btn.btn-default(type='button', data-dismiss='modal') Close

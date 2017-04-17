@@ -3,4 +3,4 @@ p
     div= item.name
     div= item.theme
     div= item.comment
-    a(href='#', id=item.id, class='reply_comment')= 'Reply'
+    button.add_comment.btn.btn-default(id=item.id, type='button') Reply

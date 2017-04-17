@@ -16,7 +16,6 @@ var insertNewComment = function(db, comment, callback) {
     // Get the documents collection
     var collection = db.collection('comments');
 
-    comment['parent'] = '';
     comment['date'] = Date.now();
 
     collection.insertOne(comment, function(err, result) {
@@ -96,36 +95,10 @@ app.route('/')
         MongoClient.connect(dburl, function(err, db) {
             assert.equal(null, err);
 
-            var modal = {
-                'id':'send_form_comment',
-                'title':'New Comment',
-                'button_text':'Create'
-            };
-
             getAllComments(db, function (data) {
                 comments = buildCommentsTree(prepareJSONdata(data));
-                res.render('index', {'comments':comments, 'title':'Comments', 'modal':modal});
+                res.render('index', {'comments':comments, 'title':'Comments'});
             });
-        });
-    });
-
-app.route('/reply_comment')
-    .get(function (req,res) {
-
-        var modal = {
-            'modal': {
-                'id':'send_reply_comment',
-                'title':'Reply Comment',
-                'button_text':'Reply'
-            }
-        };
-
-        fs.readFile('views/modal_form.jade', 'utf8', function (err, data) {
-
-            var fn = jade.compile(data);
-            var html = fn(modal);
-
-            res.send(html);
         });
     })
     .post(function (req,res) {
@@ -150,46 +123,6 @@ app.route('/reply_comment')
         });
     });
 
-app.route('/add_comment')
-    .get(function (req,res) {
-
-        var modal = {
-            'modal': {
-                'id':'send_form_comment',
-                'title':'New Comment',
-                'button_text':'Create'
-            }
-        };
-
-        fs.readFile('views/modal_form.jade', 'utf8', function (err, data) {
-
-            var fn = jade.compile(data);
-            var html = fn(modal);
-
-            res.send(html);
-        });
-    })
-    .post(function (req,res) {
-        var comment = req.body;
-
-        MongoClient.connect(dburl, function(err, db) {
-            assert.equal(null, err);
-
-            insertNewComment(db, comment, function () {
-                getAllComments(db, function (data) {
-
-                    comments = buildCommentsTree(prepareJSONdata(data));
-
-                    var fn = jade.compile(fs.readFileSync('views/comment_generator.jade', 'utf-8'), {
-                        filename: path.join(__dirname, 'views/comment_generator.jade')
-                    });
-
-                    var html = fn(comments);
-                    res.send(html);
-                });
-            });
-        });
-    });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
