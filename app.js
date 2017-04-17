@@ -152,17 +152,15 @@ app.route('/')
 
                     comments = buildCommentsTree(prepareJSONdata(data));
 
-                    var _data = {
-                        comments:comments,
-                        errors:errors.errors
-                    };
+                    var _errors = errors === undefined?'':errors.errors;
 
                     var fn = jade.compile(fs.readFileSync('views/comment_generator.jade', 'utf-8'), {
                         filename: path.join(__dirname, 'views/comment_generator.jade')
                     });
 
-                    var html = fn(_data);
-                    res.send(html);
+                    var html = fn(comments);
+
+                    res.send({'html':html, 'errors':_errors});
                 });
             });
         });
