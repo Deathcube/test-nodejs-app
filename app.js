@@ -31,18 +31,18 @@ var insertNewComment = function(db, comment, callback) {
                     description: 'username',
                     type: 'string',
                     required: true,
-                    minLength: 5
+                    minLength: 3
                 },
                 theme: {
                     description: 'text',
                     type: 'string',
-                    minLength: 5
+                    minLength: 3
                 },
                 comment: {
                     description: 'text',
                     type: 'string',
                     required: true,
-                    minLength: 5
+                    minLength: 3
                 },
                 parent: {
                     description: 'include parent id or empty string if root',

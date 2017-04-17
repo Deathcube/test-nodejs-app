@@ -18,8 +18,6 @@ $('#fields').on('click', '.modal_send', function (e) {
         fields[field.name] = field.value;
     });
 
-    console.log(1);
-
     $.ajax({
         method: "POST",
         url: "/",
