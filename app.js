@@ -1,16 +1,20 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var MongoClient = require('mongodb').MongoClient;
-var assert = require('assert');
-var fs = require('fs');
-var jade = require('jade');
-var moment = require('moment');
+var express = require('express'),
+    path = require('path'),
 
-var dburl = 'mongodb://localhost:27017/db';
+    logger = require('morgan'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+
+    MongoClient = require('mongodb').MongoClient,
+    assert = require('assert'),
+
+    fs = require('fs'),
+    jade = require('jade'),
+
+    moment = require('moment'),
+    conform = require('conform'),
+
+    dburl = 'mongodb://localhost:27017/db';
 
 
 var insertNewComment = function(db, comment, callback) {
@@ -19,10 +23,46 @@ var insertNewComment = function(db, comment, callback) {
 
     comment['date'] = Date.now();
 
-    collection.insertOne(comment, function(err, result) {
-        assert.equal(err, null);
-        callback(result);
+
+    var cv =
+        conform.validate(comment, {
+            properties: {
+                name: {
+                    description: 'username',
+                    type: 'string',
+                    required: true,
+                    minLength: 3
+                },
+                theme: {
+                    description: 'text',
+                    type: 'string',
+                    minLength: 3
+                },
+                comment: {
+                    description: 'text',
+                    type: 'string',
+                    required: true,
+                    minLength: 3
+                },
+                parent: {
+                    description: 'include parent id or empty string if root',
+                    type: 'string'
+                },
+                date: {
+                    description: 'timestamp when create',
+                    type: 'number'
+                }
+            }
     });
+
+    if (true === cv.valid){
+        collection.insertOne(comment, function(err) {
+            assert.equal(err, null);
+            callback();
+        });
+    } else {
+        callback(cv);
+    }
 };
 
 
@@ -80,8 +120,6 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -109,17 +147,20 @@ app.route('/')
         MongoClient.connect(dburl, function(err, db) {
             assert.equal(null, err);
 
-            insertNewComment(db, comment, function () {
+            insertNewComment(db, comment, function (errors) {
                 getAllComments(db, function (data) {
 
                     comments = buildCommentsTree(prepareJSONdata(data));
+
+                    var _errors = errors === undefined?'':errors.errors;
 
                     var fn = jade.compile(fs.readFileSync('views/comment_generator.jade', 'utf-8'), {
                         filename: path.join(__dirname, 'views/comment_generator.jade')
                     });
 
                     var html = fn(comments);
-                    res.send(html);
+
+                    res.send({'html':html, 'errors':_errors});
                 });
             });
         });

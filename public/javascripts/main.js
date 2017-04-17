@@ -23,13 +23,26 @@ $('#fields').on('click', '.modal_send', function (e) {
         url: "/",
         data: fields,
         success : function (data) {
-            $('#modal').modal('hide');
-            $('#comments_field').html(data);
+            if(data.errors !== '') {
+                $("span[id=err_hint]").remove();
+
+                for (var i = 0; i < data.errors.length; i++) {
+                    var _err = data.errors[i];
+                    $('#comment_form')
+                        .find('[name^="'+ _err.property +'"]')
+                        .parent()
+                        .append('<span id="err_hint" class="help-block" style="color:red">' + _err.message + '</span>');
+                }
+            } else {
+                $('#modal').modal('hide');
+                $('#comments_field').html(data.html);
+            }
         }
     });
 });
 
 $('#modal').on('hidden.bs.modal', function(){
     $('#comment_form').find('input[name="parent"]').remove();
+    $("span[id=err_hint]").remove();
 });
 
