@@ -14,7 +14,7 @@ var express = require('express'),
     moment = require('moment'),
     conform = require('conform'),
 
-    dburl = 'mongodb://localhost:27017/db';
+    dburl = 'mongodb://kirillleskin:kirillleskin123@ds062059.mlab.com:62059/nodejsapp';
 
 
 var insertNewComment = function(db, comment, callback) {
