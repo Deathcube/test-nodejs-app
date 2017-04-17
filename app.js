@@ -8,6 +8,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var fs = require('fs');
 var jade = require('jade');
+var moment = require('moment');
 
 var dburl = 'mongodb://localhost:27017/db';
 
@@ -39,6 +40,7 @@ var getAllComments = function(db, callback) {
 
             for (var i = 0; i < comments.length; i += 1) {
                 comments[i]['id'] = comments[i]._id.toString();
+                comments[i]['date'] = moment(comments[i]['date']).fromNow();
             }
             callback(comments);
             db.close();
