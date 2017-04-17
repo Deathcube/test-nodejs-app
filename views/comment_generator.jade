@@ -1,6 +1,10 @@
-mixin parseComments(comments)
+mixin parseComments(_data)
     div
-        each item, i in comments
+        each item, i in _data.errors
+            div= item.property
+
+    div
+        each item, i in _data.comments
             div(class = 'col-md-12')
                 div
                     include comment_template
@@ -8,4 +12,4 @@ mixin parseComments(comments)
                     if(item.children.length != 0)
                         mixin parseComments(item.children)
 
-+parseComments(comments)
++parseComments(_data)
